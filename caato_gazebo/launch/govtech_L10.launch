@@ -1,0 +1,52 @@
+<launch>
+  <!-- <arg name="x" default="22.53"/> -->
+  <!-- <arg name="y" default="&#45;15.65"/> -->
+  <!-- <arg name="x" default="49.82"/> -->
+  <!-- <arg name="y" default="&#45;17.45"/> -->
+  <arg name="x" default="30.50"/>
+  <arg name="y" default="-18.91"/>
+  <arg name="z" default="0.157"/>
+  <arg name="yaw" default="-3.1415" />
+  <arg name="model" default="caato" />
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <env name="GAZEBO_MODEL_PATH" value="/home/eric/decada_robotics/ws_rmf_demos/install/govtech_maps/share/govtech_maps/maps/govtech/models:/home/eric/decada_robotics/ws_rmf_demos/install/rmf_demo_maps/share/rmf_demo_maps/maps/office/models:/home/eric/decada_robotics/ws_rmf_demos/install/rmf_demo_assets/share/rmf_demo_assets/models:/usr/share/gazebo-9/models" />
+    <arg name="world_name" value="/home/eric/decada_robotics/ws_rmf_demos/install/govtech_maps/share/govtech_maps/maps/govtech/govtech.world"/>
+
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <include file="$(find caato_description)/launch/description.launch" />
+
+  <node name="spawn_caato_model" pkg="gazebo_ros" type="spawn_model"
+    args="-x $(arg x)
+    -y $(arg y)
+    -z $(arg z)
+    -Y $(arg yaw)
+    -unpause
+    -urdf
+    -model $(arg model)
+    -param robot_description" />
+
+  <!-- Launch multi laser merger -->
+  <arg name="start_delay" default="2.0" />
+  <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen"
+    launch-prefix="bash -c 'sleep $(arg start_delay); $0 $@'">
+    <param name="destination_frame" value="base_link"/>
+    <param name="cloud_destination_topic" value="/merged_cloud"/>
+    <param name="scan_destination_topic" value="/scan"/>
+    <param name="laserscan_topics" value ="/front_left/scan /back_right/scan" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+
+    <param name="angle_min" value="-3.14"/>
+    <param name="angle_max" value="3.14"/>
+    <param name="angle_increment" value="0.0058"/>
+    <param name="scan_time" value="0.0333333"/>
+    <param name="range_min" value="0.30"/>
+    <param name="range_max" value="50.0"/>
+	</node>
+
+</launch>

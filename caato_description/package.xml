@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>caato_description</name>
+  <version>0.0.0</version>
+  <description>caato URDF description</description>
+
+  <maintainer email="eric.dongxx@gmail.com">Eric Dong</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>xacro</build_depend>
+  <build_depend>roslaunch</build_depend>
+  <exec_depend>xacro</exec_depend>
+
+  <export>
+  </export>
+</package>

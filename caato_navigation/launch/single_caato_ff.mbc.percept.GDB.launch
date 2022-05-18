@@ -1,0 +1,76 @@
+<launch>
+  <arg name="model" default="caato"/>
+  <arg name="set_map_frame"  default="map"/>
+  
+
+  <!-- launches the basic single caato mbc world -->
+  <include file="$(find caato_gazebo)/launch/single_caato.mbc.launch">
+    <arg name="model" value="$(arg model)"/>
+  </include>
+
+  <!-- Map server -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(find decada_sim_assets)/maps/mbc/lvl10/mbc.yaml">
+    <param name="frame_id" value="$(arg set_map_frame)"/>
+  </node>
+
+  <!-- launch the navigation stacks of 3 caatos-->
+  <arg name="caato_0_prefix" value="caato_0"/>
+  <group ns="$(arg caato_0_prefix)">
+    <include file="$(find caato_navigation)/launch/single_caato_ff.launch">
+      <arg name="model" value="$(arg model)"/>
+      <arg name="set_base_frame" value="$(arg caato_0_prefix)/base_link"/>
+      <arg name="set_odom_frame" value="$(arg caato_0_prefix)/odom"/>
+      <arg name="set_scan_frame" value="$(arg caato_0_prefix)/base_scan"/>
+      <arg name="set_map_frame" value="$(arg set_map_frame)"/>
+      <arg name="open_rviz" value="false"/>
+      <arg name="initial_pose_x" default="14.7"/>
+      <arg name="initial_pose_y" default="-25.0"/>
+      <arg name="initial_pose_a" default="1.57"/>
+    </include>
+  </group>
+
+
+
+
+  <!-- launch the free fleet clients of 3 caatos-->
+  <node name="$(arg caato_0_prefix)_free_fleet_client_node" 
+      pkg="free_fleet_client_ros1"
+      type="free_fleet_client_ros1" output="screen">
+    <param name="fleet_name" type="string" value="caato_fleet"/>
+    <param name="robot_name" type="string" value="$(arg caato_0_prefix)"/>
+    <param name="dds_domain" type="int" value="42"/>
+    <param name="max_dist_to_first_waypoint" type="double" value="10.0"/>
+    <param name="battery_state_topic" value="$(arg caato_0_prefix)/battery_state"/>
+    <param name="robot_frame" value="$(arg caato_0_prefix)/base_link"/>
+    <param name="move_base_server_name" value="$(arg caato_0_prefix)/move_base"/>
+  </node>
+
+
+
+  <arg name="launch_prefix" default="" /> 
+
+  <remap from="/image_raw" to="/d435/color/image_raw"/>
+  <node pkg="atc_detector" type="atc_detector_node" name="atc_detector_node" output="log" >  
+	<param name="working_path" value="$(find atc_detector)" />	
+	<param name="record" value="false"/>
+  	<param name="show" value="false"/>
+  </node>
+
+  <!--Perform a rotation about the z axis to fit to the pose output. This will be the parent to the pose output from the autoencoder.-->
+  <node pkg="atc_tf_pose" type="atc_tf_pose_node" name="atc_tf_pose_node"/>
+  <node pkg="atc_image_pub" type="atc_image_pub_cpp_node" name="atc_image_pub_cpp_node" output="screen">
+	<!--param name="video_source" value="$(find trolley_detector)/test_2.MP4" /-->
+	<param name="video_source" value="realsense"/>
+	<param name="record_video" value="false"/>
+  </node>
+
+
+
+
+  <!-- launch the overall visualization on rviz -->
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+        args="-d $(find rviz_atc_plugins)/rviz/atc_rviz.rviz" 
+        launch-prefix="xterm -e gdb --args"
+        output="screen"/>
+  
+</launch>

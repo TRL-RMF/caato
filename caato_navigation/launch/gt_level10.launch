@@ -1,0 +1,23 @@
+<launch>
+  <arg name="map_file" value="$(find caato_navigation)/maps/level10_2.yaml" />
+  <arg name="open_rviz" default="false" />
+  <arg name="open_waypoints" default="true" />
+
+  <include file="$(find caato_navigation)/launch/amcl.launch" >
+    <!-- Initial pose at big place home position -->
+    <arg name="initial_pose_x" default="18.38"/>
+    <arg name="initial_pose_y" default="1.625"/>
+    <arg name="initial_pose_a" default="0.0"/>
+  </include>
+
+  <include file="$(find caato_navigation)/launch/common/navigation.launch" >
+    <arg name="map_file" value="$(arg map_file)" />
+  </include>
+
+  <node if="$(arg open_rviz)" pkg="rviz" name="rviz" type="rviz" required="true" 
+    args="-d $(find caato_navigation)/rviz/navigation.rviz" />
+
+  <node if="$(arg open_waypoints)" pkg="waypoints" type="waypoints_server" required="true" name="waypoints_server" output="screen" >
+  </node>
+
+</launch>

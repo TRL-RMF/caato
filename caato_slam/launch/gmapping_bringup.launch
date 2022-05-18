@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find caato_bringup)/launch/caato_core.launch" />
+
+  <include file="$(find caato_slam)/launch/gmapping.launch" />
+</launch>

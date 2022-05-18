@@ -1,0 +1,55 @@
+<launch>
+  <arg name="model" default="caato" />
+  <arg name="first_caato"  default="caato_0"/>
+
+  <arg name="first_caato_x_pos" default="22.0"/>
+  <arg name="first_caato_y_pos" default="-17.0"/>
+  <arg name="first_caato_z_pos" default=" 2.0"/>
+  <arg name="first_caato_yaw"   default=" 1.57"/>
+  
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find decada_sim_assets)/worlds/mbc.building.nodoors.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>  
+
+  <group ns = "$(arg first_caato)">
+      <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find caato_description)/urdf/caato_v1f.urdf.xacro' botname:=$(arg first_caato)" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen">
+      <param name="publish_frequency" type="double" value="50.0" />
+      <param name="tf_prefix" value="$(arg first_caato)/" />
+      <param name="prefix_tf_with" value="$(arg first_caato)/" />
+    </node>
+    
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg first_caato) -x $(arg first_caato_x_pos) -y $(arg first_caato_y_pos) -z $(arg first_caato_z_pos) -Y $(arg first_caato_yaw) -param robot_description" />
+  </group>
+
+  <!-- Launch multi laser merger -->
+  <!-- See https://answers.ros.org/question/225183/ira_laser_tools-merger-doesnt-subscribe-to-topics-from-laser-in-gazebo/  -->
+  <!-- Needs start delay! -->
+  <arg name="start_delay" default="8.0" />
+  <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen"
+    launch-prefix="bash -c 'sleep $(arg start_delay); $0 $@'">
+    <param name="destination_frame" value="$(arg first_caato)/base_link"/>
+    <param name="cloud_destination_topic" value="$(arg first_caato)/merged_cloud"/>
+    <param name="scan_destination_topic" value="$(arg first_caato)/scan"/>
+    <param name="laserscan_topics" value ="/$(arg first_caato)/hokuyo_laser_scanner_1/scan /$(arg first_caato)/hokuyo_laser_scanner_2/scan" />
+
+    <param name="angle_min" value="-3.14"/>
+    <param name="angle_max" value="3.14"/>
+    <param name="angle_increment" value="0.0058"/>
+    <param name="scan_time" value="0.0333333"/>
+    <param name="range_min" value="0.30"/>
+    <param name="range_max" value="50.0"/>
+  </node>
+  
+  <!-- 2D laser filter -->
+  <!-- <include file="$(find laser_filters)/examples/speckle_filter_example.launch"> -->
+  <!--   </include> -->
+
+</launch>

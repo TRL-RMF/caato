@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>caato_teleop</name>
+  <version>0.0.0</version>
+  <description>
+    Provides teleoperation support using keyboard to remote control caato
+  </description>
+  <license>Apache 2.0</license>
+  <author email="eric.dongxx@gmail.com">Eric Dong</author>
+  <maintainer email="eric.dongxx@gmail.com">Eric Dong</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <exec_depend>caato_bringup</exec_depend>
+  <exec_depend>teleop_twist_keyboard</exec_depend>
+</package>

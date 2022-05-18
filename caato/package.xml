@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>caato</name>
+  <version>0.0.0</version>
+  <description>
+    ROS packages for the caato (meta package)
+  </description>
+  <license>Apache 2.0</license>
+  <license>BSD</license>
+  <author email="eric.dongxx@gmail.com">Eric Dong</author>
+  <author email="timityjoe@hotmail.com">Timothy-Joe Tan</author>
+  <maintainer email="eric.dongxx@gmail.com">Eric Dong</maintainer>
+  <maintainer email="timityjoe@hotmail.com">Timothy-Joe Tan</maintainer>
+  <url type="repository">https://git.siotgov.tech/decada_robotics/caato.git</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>caato_bringup</exec_depend>
+  <exec_depend>caato_description</exec_depend>
+  <exec_depend>caato_example</exec_depend>
+  <exec_depend>caato_navigation</exec_depend>
+  <exec_depend>caato_slam</exec_depend>
+  <exec_depend>caato_teleop</exec_depend>
+  <export><metapackage/></export>
+</package>

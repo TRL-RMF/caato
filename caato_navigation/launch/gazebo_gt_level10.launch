@@ -1,0 +1,25 @@
+<launch>
+  <!-- Argument -->
+  <arg name="map_file" default="$(find caato_navigation)/maps/level10_gmapping.yaml" />
+  <arg name="move_forward_only" default="true"/>
+
+  <!-- Map server -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <!-- AMCL -->
+  <include file="$(find caato_navigation)/launch/amcl.launch" >
+    <!-- Initial pose at big place HOME -->
+    <arg name="initial_pose_x" default="30.50"/>
+    <arg name="initial_pose_y" default="-18.91"/>
+    <arg name="initial_pose_a" default="-3.1415"/>
+  </include>
+
+  <!-- move_base -->
+  <include file="$(find caato_navigation)/launch/move_base.launch">
+    <arg name="move_forward_only" value="$(arg move_forward_only)"/>
+  </include>
+
+  <node pkg="rviz" type="rviz" name="rviz" 
+    args="-d $(find caato_navigation)/rviz/gazebo_level10.rviz" />
+
+</launch>
