@@ -15,7 +15,6 @@
   <buildtool_depend>catkin</buildtool_depend>
   <exec_depend>caato_bringup</exec_depend>
   <exec_depend>caato_description</exec_depend>
-  <exec_depend>caato_example</exec_depend>
   <exec_depend>caato_navigation</exec_depend>
   <exec_depend>caato_slam</exec_depend>
   <exec_depend>caato_teleop</exec_depend>
